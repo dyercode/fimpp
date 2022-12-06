@@ -19,3 +19,9 @@ grammar/bnf.synctex.gz
 
 # Scala-IDE specific
 .scala_dependencies
+.bloop
+.metals
+project/project
+.bsp
+.direnv
+metals.sbt
