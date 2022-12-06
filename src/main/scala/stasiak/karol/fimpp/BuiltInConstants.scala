@@ -6,7 +6,7 @@ import collection.mutable
   * this template use File | Settings | File Templates.
   */
 object BuiltInConstants {
-  def apply(targetMap: mutable.Map[String, RuntimeValue]) {
+  def apply(targetMap: mutable.Map[String, RuntimeValue]): Unit = {
     targetMap ++= Map(
       "new line" -> RuntimeString("\n"),
       "apostrophe" -> RuntimeString("\'"),

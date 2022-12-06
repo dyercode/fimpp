@@ -1,9 +1,5 @@
 package stasiak.karol.fimpp
 
-import stasiak.karol.fimpp.FimppParser
-import stasiak.karol.fimpp.Condition
-import scala.language.postfixOps
-
 class FimppParserSuite extends munit.FunSuite {
 
   test("more than one is relational gt") {
@@ -95,15 +91,10 @@ class FimppParserSuite extends munit.FunSuite {
       ) ~ FimppParser.kw("i"),
       "x i".toLowerCase()
     )
-    import scala.util.parsing.combinator._
     assert(subject.successful)
-    /* not sure why not compiling
-    assertEquals(subject.get, ("x".~(())))
-    assertEquals(
-      subject.get,
-      ("x" ~ ())
-    )
-    */
+    // not sure why not compiling
+    // import scala.util.parsing.combinator._
+    // assertEquals(subject.get, ("x" ~()))
   }
   test("single quotes concat ") {
     val subject = FimppParser.parseAll(
@@ -250,96 +241,103 @@ class FimppParserSuite extends munit.FunSuite {
         |
         |Your faithful student, Twilight Sparkle.      """.stripMargin
     )
-    Module(
-      "Letter One",
-      List(
-        Function(
-          "letter to celestia",
-          List(),
-          List(ExprStat(FunctionCall("applejack's drinking song", List()))),
-          "twilight sparkle"
-        ),
-        Function(
-          "applejack's drinking song",
-          List(),
-          List(
-            Assignment("applejack", NumberValue(99)),
-            WhileStat(
-              Relational(VariableValue("applejack"), ">", NumberValue(1)),
-              List(
-                PrintStat(
-                  Concatenation(
-                    List(
-                      Concatenation(
-                        List(
-                          StringValue(" "),
-                          VariableValue("applejack"),
-                          StringValue(" jugs of cider on the wall, "),
-                          VariableValue("applejack"),
-                          StringValue(" jugs of cider,")
-                        )
-                      ),
-                      StringValue("\n")
-                    )
-                  )
-                ),
-                Increment("applejack", NumberValue(-1)),
-                IfStat(
-                  Relational(VariableValue("applejack"), ">", NumberValue(1)),
-                  List(
-                    PrintStat(
-                      Concatenation(
-                        List(
-                          Concatenation(
-                            List(
-                              StringValue("Take one down and pass it around, "),
-                              VariableValue("applejack"),
-                              StringValue(" jugs of cider on the wall.")
-                            )
-                          ),
-                          StringValue("\n")
-                        )
+
+    assert(result.successful)
+    assertEquals(
+      result.get,
+      Module(
+        "Letter One",
+        List(
+          Function(
+            "letter to celestia",
+            List(),
+            List(ExprStat(FunctionCall("applejack's drinking song", List()))),
+            "twilight sparkle"
+          ),
+          Function(
+            "applejack's drinking song",
+            List(),
+            List(
+              Assignment("applejack", NumberValue(99)),
+              WhileStat(
+                Relational(VariableValue("applejack"), ">", NumberValue(1)),
+                List(
+                  PrintStat(
+                    Concatenation(
+                      List(
+                        Concatenation(
+                          List(
+                            StringValue(" "),
+                            VariableValue("applejack"),
+                            StringValue(" jugs of cider on the wall, "),
+                            VariableValue("applejack"),
+                            StringValue(" jugs of cider,")
+                          )
+                        ),
+                        StringValue("\n")
                       )
                     )
                   ),
-                  List(
-                    PrintStat(
-                      Concatenation(
-                        List(
-                          Concatenation(
-                            List(
-                              StringValue(
-                                "Take one down and pass it around, 1 jug of cider on the wall.\n1 jug of cider on the wall, 1 jug of cider.\nTake one down and pass it around, no more jugs of cider on the wall."
+                  Increment("applejack", NumberValue(-1)),
+                  IfStat(
+                    Relational(VariableValue("applejack"), ">", NumberValue(1)),
+                    List(
+                      PrintStat(
+                        Concatenation(
+                          List(
+                            Concatenation(
+                              List(
+                                StringValue(
+                                  "Take one down and pass it around, "
+                                ),
+                                VariableValue("applejack"),
+                                StringValue(" jugs of cider on the wall.")
                               )
-                            )
-                          ),
-                          StringValue("\n")
+                            ),
+                            StringValue("\n")
+                          )
+                        )
+                      )
+                    ),
+                    List(
+                      PrintStat(
+                        Concatenation(
+                          List(
+                            Concatenation(
+                              List(
+                                StringValue(
+                                  "Take one down and pass it around, 1 jug of cider on the wall.\n1 jug of cider on the wall, 1 jug of cider.\nTake one down and pass it around, no more jugs of cider on the wall."
+                                )
+                              )
+                            ),
+                            StringValue("\n")
+                          )
                         )
                       )
                     )
                   )
-                )
-              ),
-              None,
-              List(
-                PrintStat(
-                  Concatenation(
-                    List(
-                      Concatenation(
-                        List(
-                          StringValue(
-                            "No more jugs of cider on the wall, no more jugs of cider.\nGo to the store and buy some more, 99 jugs of cider on the wall."
+                ),
+                None,
+                List(
+                  PrintStat(
+                    Concatenation(
+                      List(
+                        Concatenation(
+                          List(
+                            StringValue(
+                              "No more jugs of cider on the wall, no more jugs of cider.\nGo to the store and buy some more, 99 jugs of cider on the wall."
+                            )
                           )
-                        )
-                      ),
-                      StringValue("\n")
+                        ),
+                        StringValue("\n")
+                      )
                     )
                   )
                 )
               )
-            )
-          ),
-          "applejack"
+            ),
+            "applejack"
+          )
         )
       )
     )

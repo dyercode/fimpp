@@ -12,7 +12,7 @@ The list of words will be converted to fully qualified Java class name. The load
 
     javax swing j frame => javax.swing.JFrame
     java lang math => java.lang.Math
-    java util hash map => java.util.HashMap 
+    java util hash map => java.util.HashMap
     org xml sax helpers xml filter impl => org.xml.sax.helpers.XMLFilterImpl
     javax swing graphics two => javax.swing.Graphics2
 
@@ -20,7 +20,7 @@ Creating objects
 --------------
 
     I woke up <identifier: variable> with <identifier: class> {and <argument list>}.
-    
+
 Reading fields
 ------------
 
@@ -42,32 +42,32 @@ Calling methods
 
     {I told <identifier: variable for result>} I asked {<identifier: class>} about <argument list> (so|if|what|when) {(it|she|he|they)} <identifier: method name>.
 
-Equivalent of either: 
+Equivalent of either:
 
-    result = class.method(arguments); 
+    result = class.method(arguments);
     result = ((class)(arguments.head)).method(arguments.tail);
 
    {I told <identifier: variable for result>} I asked {<identifier: class>} about <argument> made <identifier: property name>.
 
-Equivalent of either: 
+Equivalent of either:
 
-    result = class.setproperty(argument, true); 
+    result = class.setproperty(argument, true);
     result = ((class)argument)).setproperty(true);
 
    {I told <identifier: variable for result>} I asked {<identifier: class>} about <argument> with <arguments> of <property>.
 
-Equivalent of either: 
+Equivalent of either:
 
-    result = class.setproperty(argument, arguments); 
+    result = class.setproperty(argument, arguments);
     result = ((class)argument)).setproperty(arguments);
 
    {I told <identifier: variable for result>} I asked {<identifier: class>} (what|if|when) <argument> {with <arguments>} (is|are|was|were|has|have|had) property .
 
-Equivalent of either: 
+Equivalent of either:
 
-    result = class.getproperty(argument, arguments); 
+    result = class.getproperty(argument, arguments);
     result = ((class)argument)).getproperty(arguments);
-    result = class.isproperty(argument, arguments); 
+    result = class.isproperty(argument, arguments);
     result = ((class)argument)).isproperty(arguments);
 
 Automatic conversion from functions to javax.swing.ActionListener

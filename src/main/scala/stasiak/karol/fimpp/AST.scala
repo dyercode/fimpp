@@ -1,6 +1,5 @@
 package stasiak.karol.fimpp
 
-import collection.mutable
 import util.parsing.input.Positional
 import scala.language.postfixOps
 
@@ -22,7 +21,7 @@ sealed trait Statement extends Positional {
 }
 case class ClassImportStat(variable: String, id: List[String])
     extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context): Unit = {
     context.set(variable, RuntimeClass(JavaInterop.loadClass(id)))
   }
 }
@@ -32,7 +31,7 @@ case class MethodCall(
     id: String,
     args: List[Expr]
 ) extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context): Unit = {
     clazz match {
       case Some(cla) =>
         context get cla match {
@@ -62,7 +61,7 @@ case class ConstructorCall(
     clazz: String,
     args: List[Expr]
 ) extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context): Unit = {
     context get clazz match {
       case RuntimeClass(cl) =>
         val result =
@@ -74,7 +73,7 @@ case class ConstructorCall(
 }
 case class FieldAssignment(objClass: String, field: Expr, value: Expr)
     extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context): Unit = {
     val oc = context get objClass
     val v = value eval context
     (oc, field) match {
@@ -92,7 +91,7 @@ case class FieldAssignment(objClass: String, field: Expr, value: Expr)
 }
 case class FieldRetrieval(objClass: String, field: Expr, otherVar: String)
     extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context): Unit = {
     val oc = context get objClass
     val result = (oc, field) match {
       case (RuntimeClass(cl), VariableValue(n)) =>
@@ -117,13 +116,13 @@ case class FieldRetrieval(objClass: String, field: Expr, otherVar: String)
   }
 }
 case class Assignment(variable: String, value: Expr) extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context): Unit = {
     context.set(variable, value eval context)
   }
 }
 case class ArrayAssignment(arrayVariable: String, index: Expr, value: Expr)
     extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context): Unit = {
     context.get(arrayVariable) match {
       case a: RuntimeArray =>
         index.eval(context) match {
@@ -149,7 +148,7 @@ case class ArrayRetrieval(
     index: Expr,
     otherVariable: String
 ) extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context): Unit =  {
     context.get(arrayVariable) match {
       case a: RuntimeArray =>
         index.eval(context) match {
@@ -171,20 +170,20 @@ case class ArrayRetrieval(
   }
 }
 case class ArrayInit(arrayVariable: String) extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context) : Unit = {
     context.set(arrayVariable, RuntimeArray())
   }
 }
 case class ExprStat(e: Expr) extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context) : Unit = {
     e.eval(context)
   }
 }
 case object NopStat extends Statement {
-  def interpret(context: Context) {}
+  def interpret(context: Context) : Unit = {}
 }
 case class Increment(variable: String, value: Expr) extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context) : Unit = {
     (context.get(variable), value.eval(context)) match {
       case (RuntimeNumber(x), RuntimeNumber(y)) =>
         context.set(variable, RuntimeNumber(x + y))
@@ -201,7 +200,7 @@ case class IfStat(
     body: List[Statement],
     body2: List[Statement]
 ) extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context) : Unit = {
     if (cond.eval(context)) {
       body.foreach(_ interpret context)
     } else {
@@ -215,7 +214,7 @@ case class WhileStat(
     catchBody: Option[List[Statement]],
     finallyBody: List[Statement]
 ) extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context) : Unit = {
     catchBody match {
       case Some(cBody) =>
         try {
@@ -224,7 +223,7 @@ case class WhileStat(
           }
 
         } catch {
-          case e: FimException => cBody.foreach(_ interpret context)
+          case _: FimException => cBody.foreach(_.interpret(context))
         } finally {
           finallyBody.foreach(_ interpret context)
         }
@@ -241,7 +240,7 @@ case class WhileStat(
   }
 }
 case class GlobalDeclStat(id: String) extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context) : Unit = {
     context.treatAsGlobal(id)
   }
 }
@@ -251,7 +250,7 @@ case class RepeatStat(
     catchBody: Option[List[Statement]],
     finallyBody: List[Statement]
 ) extends Statement {
-  def interpret(context: Context) {
+  def interpret(context: Context) : Unit = {
     catchBody match {
       case Some(cBody) =>
         try {
@@ -260,7 +259,7 @@ case class RepeatStat(
           }
 
         } catch {
-          case e: FimException => cBody.foreach(_ interpret context)
+          case _: FimException => cBody.foreach(_.interpret(context))
         } finally {
           finallyBody.foreach(_ interpret context)
         }

@@ -38,6 +38,7 @@ object FimppParser extends RegexParsers {
       "made",
       "if"
     ) // TODO
+
   val numbers = List(
     "zero",
     "one",
@@ -53,6 +54,7 @@ object FimppParser extends RegexParsers {
     "eleven",
     "twelve"
   )
+
   val ordinals = List(
     null,
     "first",
@@ -68,15 +70,21 @@ object FimppParser extends RegexParsers {
     "eleventh",
     "twelfth"
   )
+
   val articles = Set("a", "an", "the")
+
   def fullStop: Parser[Unit] =
     opt(comma ~ kw("because") ~ commentContent) ~ "." ^^^ ()
+
   def headerEnd: Parser[Unit] =
     opt(comma ~ kw("because") ~ commentContent) ~ ("." | ":") ^^^ ()
+
   def sentenceEnd: Parser[Unit] =
     opt(comma ~ kw("because") ~ commentContent) ~ ("." | "!") ^^^ ()
+
   def questionEnd: Parser[Unit] =
     opt(comma ~ kw("because") ~ commentContent) ~ ("?") ^^^ ()
+
   def comma: Parser[Unit] = "," ^^^ ()
 
   def commentContent: Parser[Unit] = """[^\.\?!]*""".r ^^^ ()
@@ -499,7 +507,7 @@ object FimppParser extends RegexParsers {
       case (fName ~ args) ~ stats ~ (fName2 ~ retArg) if fName == fName2 =>
         Function(fName, args.getOrElse(Nil), stats, retArg.getOrElse(fName))
     }, {
-      case (fName ~ args) ~ stats ~ (fName2 ~ retArg) =>
+      case (fName ~ _args) ~ stats ~ (fName2 ~ _retArg) =>
         ERRORS.mismatchedFunctionNameInFooter(fName, fName2)
       case _ =>
         ERRORS.unknownError
@@ -534,6 +542,7 @@ object FimppParser extends RegexParsers {
         )
       }
   )
+
   def c_likeModule: Parser[Module] = (
     (kw("dear", "princess", "celestia") ~> ":" ~> rawIdentifier <~ headerEnd)
       ~ rep(function)
@@ -542,7 +551,9 @@ object FimppParser extends RegexParsers {
         Module(name, m :: functions)
       }
   )
+
   def module = wrappedModule | c_likeModule
+
   def parseFim(s: String): Option[Module] = {
     parseAll(module, s) match {
       case Success(fimModule, _) => Some(fimModule)

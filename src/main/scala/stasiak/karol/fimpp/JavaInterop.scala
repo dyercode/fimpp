@@ -3,9 +3,6 @@ package stasiak.karol.fimpp
 import java.lang.reflect.{Field, Modifier, Constructor, Method}
 import Modifier.STATIC
 import Modifier.PRIVATE
-import javax.swing.JFrame
-import java.util
-import collection.mutable.ListBuffer
 
 object JavaInterop {
   def normalizeFromFim(str: String) =
@@ -24,6 +21,7 @@ object JavaInterop {
       .replaceAll("8", "eight")
       .replaceAll("9", "nine")
   )
+
   def normalizedMatch(
       fromFimNormalized: String,
       fromJavaNormalized: String
@@ -36,8 +34,10 @@ object JavaInterop {
       ) == fromJavaNormalized
     else fromFimNormalized == fromJavaNormalized
   }
+
   def isPrivate(flags: Int) = 0 != (flags & PRIVATE)
   def isStatic(flags: Int) = 0 != (flags & STATIC)
+
   def callMethod(
       context: Context,
       clazz: Class[_],
@@ -96,6 +96,7 @@ object JavaInterop {
       )
     }
   }
+
   def callConstructor(
       context: Context,
       clazz: Class[_],
@@ -192,6 +193,7 @@ object JavaInterop {
         else throw new FimException("Not a field")
       }
     }
+
   val digits = List(
     "zero",
     "one",
@@ -205,21 +207,19 @@ object JavaInterop {
     "nine"
   )
   def loadClass(id: List[String]): Class[_] = {
-    val possibleClassNames = new ListBuffer[String]
     def allPossibleShortClassNames(a: List[String]): List[String] = a match {
       case Nil => List("")
       case x :: xs =>
         val shorter = allPossibleShortClassNames(xs)
         val xl = x.toLowerCase.replaceAll("-", "_").replaceAll("\'", "")
-        var tmp = shorter.map(xl.capitalize + _)
+        val tmp = shorter.map(xl.capitalize + _)
         if (x.length > 1 && x.length < 3) {
           tmp reverse_::: shorter.map(x.toUpperCase + _)
-        }
-        if (digits.contains(xl)) {
-          tmp reverse_::: shorter.map(digits.indexOf(xl) + _)
-        }
-        tmp
+        } else if (digits.contains(xl)) {
+          tmp reverse_::: shorter.map(digits.indexOf(xl).toString + _)
+        } else tmp
     }
+
     val allPossibleClasses =
       for (
         packageLength <- 1 until id.length;
@@ -241,9 +241,7 @@ object JavaInterop {
     }
     if (classes.length > 1) {
       throw new FimException(
-        "Couldn't find class " + id.mkString(
-          " "
-        ) + "\nPossible candidates:\n\t" + classes.mkString("\n\t")
+        s"Couldn't find class ${id.mkString(" ")}\nPossible candidates:\n\t${classes.mkString("\n\t")}"
       )
     }
     Class.forName(classes.head)

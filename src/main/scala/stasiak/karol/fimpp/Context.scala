@@ -21,13 +21,16 @@ object RuntimeValue {
     case _ => RuntimeJavaObject(jObj)
   }
 }
+
 sealed trait RuntimeValue {
   def matches(clazz: Class[_]): Double
   def convertTo(context: Context, clazz: Class[_]): Any
   def toJava: Any
 }
+
 case class RuntimeString(str: String) extends RuntimeValue {
   override def toString = str
+
   def matches(clazz: Class[_]) = clazz match {
     case m if m == classOf[Char] => if (str.length == 1) 1.0 else 0.0
     case m if m == classOf[java.lang.Character] =>
@@ -36,6 +39,7 @@ case class RuntimeString(str: String) extends RuntimeValue {
     case m if m == classOf[AnyRef] => 0.5
     case _                         => 0 // TODO
   }
+
   def convertTo(context: Context, clazz: Class[_]) = clazz match {
     case m if m == classOf[Char]                => str(0)
     case m if m == classOf[java.lang.Character] => str(0)
@@ -48,6 +52,7 @@ case class RuntimeString(str: String) extends RuntimeValue {
 
 case class RuntimeNumber(num: Long) extends RuntimeValue {
   override def toString = num.toString
+
   def matches(clazz: Class[_]) = clazz match {
     case m if m == classOf[Long] || m == classOf[java.lang.Long]   => 1.0
     case m if m == classOf[Int] || m == classOf[java.lang.Integer] => 1.0
@@ -101,7 +106,7 @@ case class RuntimeFunction(function: Function) extends RuntimeValue {
   def convertTo(context: Context, clazz: Class[_]) = clazz match {
     case m if m == classOf[ActionListener] =>
       new ActionListener {
-        def actionPerformed(p1: ActionEvent) {
+        def actionPerformed(p1: ActionEvent): Unit = {
           function.call(context, Nil)
         }
       }
@@ -120,12 +125,15 @@ case class RuntimeBuiltin(function: List[RuntimeValue] => RuntimeValue)
 }
 case object RuntimeGlobalReference extends RuntimeValue {
   override def toString = "<function>"
+
   def matches(clazz: Class[_]) = throw new FimException(
     "I don't know what went wrong"
   )
+
   def convertTo(context: Context, clazz: Class[_]) = throw new FimException(
     "I don't know what went wrong"
   )
+
   def toJava = throw new FimException("I don't know what went wrong")
 }
 case class RuntimeArray(array: ArrayBuffer[RuntimeValue] = new ArrayBuffer)
@@ -138,7 +146,7 @@ case class RuntimeArray(array: ArrayBuffer[RuntimeValue] = new ArrayBuffer)
       array(index.toInt - 1)
     }
   }
-  def set(index: Long, value: RuntimeValue) {
+  def set(index: Long, value: RuntimeValue): Unit = {
     while (array.size < index) array += RuntimeNull
     array(index.toInt - 1) = value
   }
@@ -171,14 +179,13 @@ class Context private (
     globalMap: mutable.Map[String, RuntimeValue]
 ) {
 
-  def this(module: Module) {
+  def this(module: Module) = {
     this(mutable.Map(), mutable.Map())
     BuiltInConstants(globalMap)
     BuiltInFunctions(globalMap)
     for (f <- module.functions) {
       if (f != null) globalMap(f.name) = RuntimeFunction(f)
     }
-    // println(globalMap)
   }
 
   def getLocal(name: String) = {
@@ -197,7 +204,7 @@ class Context private (
     }
   }
 
-  def set(name: String, value: RuntimeValue) {
+  def set(name: String, value: RuntimeValue): Unit = {
     if (map.get(name) == Some(RuntimeGlobalReference)) {
       globalMap(name) = value
     } else {
@@ -205,7 +212,7 @@ class Context private (
     }
   }
 
-  def treatAsGlobal(name: String) {
+  def treatAsGlobal(name: String): Unit = {
     map(name) = RuntimeGlobalReference
   }
 

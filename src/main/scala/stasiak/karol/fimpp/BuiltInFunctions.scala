@@ -6,7 +6,7 @@ import collection.mutable.ArrayBuffer
   * this template use File | Settings | File Templates.
   */
 object BuiltInFunctions {
-  def apply(targetMap: mutable.Map[String, RuntimeValue]) {
+  def apply(targetMap: mutable.Map[String, RuntimeValue]) : Unit = {
     targetMap ++= Map(
       "sum" -> RuntimeBuiltin(sum _),
       "difference" -> RuntimeBuiltin(difference _),
