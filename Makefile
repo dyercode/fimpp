@@ -1,13 +1,10 @@
 all:
-	mkdir -p target
-	scalac -d target src/stasiak/karol/fimpp/*
-	cd target && jar cfe ../bin/fimpp.jar stasiak.karol.fimpp.Main stasiak
-
+	sbt test assembly
 test:
 	./run_tests.sh
 
 test-parser:
-	scala -classpath bin/fimpp.jar test/UnitTests.scala
+	sbt test
 
 clean:
 	rm -r target
