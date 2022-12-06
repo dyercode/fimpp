@@ -25,3 +25,4 @@ project/project
 .bsp
 .direnv
 metals.sbt
+.idea
