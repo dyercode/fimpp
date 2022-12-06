@@ -45,39 +45,20 @@ the FIM++ page at the [Esolang Wiki][5a].
 
 ## Compilation
 
-You will need the [Scala compiler][6] and the Java Development Kit (JDK) to
-build the *fimpp* interpreter from source. Be warned that there are some known
+You will need [sbt](https://www.scala-sbt.org/) (or [nix](https://nixos.org/) develop) and the Java Development Kit (JDK) to
+build the *fimpp* interpreter from source.
+
+I haven't seen the problems yet but only run some basic tests, all the scala has been updated to 2.13.
+I was really lazy with converting a few of them so don't be surprised if some tests fail on windows:
+Be warned that there are some known
 problems when using newer Scala and Java versions (any contributions in that
 regard would be most welcome). Scala 2.9.2 and OpenJDK 7 in Debian Jessie are
 known to work. If you have problems getting things to play nicely, see *Running
 from Docker* below.
 
-[6]: http://www.scala-lang.org/downloads
-
-On a Debian GNU/Linux system, the Scala compiler can be installed with the
-following command:
-
-    $ sudo apt-get install scala
-
-The easiest way to compile the FIM++ interpreter is to use the provided
-Makefile:
-
-    $ make
+    $ sbt test assembly
 
 And that's all! A freshly compiled `fimpp.jar` should land in your `bin`
-directory!
-
-If you want to compile it manually (e.g. there is no `make` on your system),
-follow these steps. These steps should also work on Windows:
-
-    $ mkdir target
-    $ scalac -d target src/stasiak/karol/fimpp/*
-    $ cd target
-    $ jar cfe ../bin/fimpp.jar stasiak.karol.fimpp.Main stasiak
-
-If you want to make sure everything works as expected, run some tests:
-
-    $ make test
 
 ## Running
 
