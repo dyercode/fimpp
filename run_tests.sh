@@ -45,7 +45,7 @@ if [ -z "$cmd" -o "$cmd" = "examples" ]; then
 		fi
 
 		name=`basename "$src" .fimpp`
-		out="test/examples/${name}.out"
+		out="src/test/scala/examples/${name}.out"
 
 		bin/fimpp "$src" > "$out" 2>&1
 
@@ -56,7 +56,7 @@ fi
 if [ -z "$cmd" -o "$cmd" = "errors" ]; then
 	echo "Testing error messages"
 
-	for src in test/errors/*.fimpp; do
+	for src in src/test/scala/errors/*.fimpp; do
 		echo -n "    `basename $src`... "
 
 		out=${src%.fimpp}.out
@@ -68,7 +68,7 @@ if [ -z "$cmd" -o "$cmd" = "errors" ]; then
 fi
 
 if [ -z "$cmd" -o "$cmd" = "unit" ]; then
-	out="test/UnitTests.out"
+	out="src/test/scala/UnitTests.out"
 
 	echo -n "Running unit tests... "
 
